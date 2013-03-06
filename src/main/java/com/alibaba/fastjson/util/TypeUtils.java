@@ -34,14 +34,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -1058,5 +1065,81 @@ public class TypeUtils {
         }
 
         return Object.class;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Object clone(Object o) {
+    	if (o == null) {
+    		return null;
+    	}
+    	
+    	if (o instanceof Map) {
+    		Map map = (Map) o;
+    		Class<?> mapClass = map.getClass();
+    		
+    		Map newMap;
+    		if (mapClass == HashMap.class) {
+    			newMap = new HashMap();
+    		} else if (mapClass == JSONObject.class) {
+    			newMap = new JSONObject();
+    		} else if (mapClass == LinkedHashMap.class) {
+    			newMap = new LinkedHashMap();
+    		} else if (mapClass == TreeMap.class) {
+    			newMap = new TreeMap();
+    		} else if (mapClass == AntiCollisionHashMap.class) {
+    			newMap = new AntiCollisionHashMap();
+    		} else if (mapClass == ConcurrentHashMap.class) {
+    			newMap = new ConcurrentHashMap();
+    		} else if (mapClass == Hashtable.class) {
+    			newMap = new Hashtable();
+      		} else if (map == Collections.EMPTY_MAP) {
+      			newMap = map;
+    		} else {
+    			throw new UnsupportedOperationException("type not suppport : " + mapClass);
+    		}
+    		
+    		for (Object item : map.entrySet()) {
+    			Map.Entry entry = (Map.Entry) item;
+    			Object key = clone(entry.getKey());
+    			Object value = clone(entry.getValue());
+    			
+    			newMap.put(key, value);
+    		}
+    		
+    		return newMap;
+    	}
+    	
+    	if (o instanceof Collection) {
+    		Collection collection = (Collection) o;
+    		Class<?> collectionClass = collection.getClass();
+    		
+    		Collection newCollection;
+    		if (collectionClass == ArrayList.class) {
+    			newCollection = new ArrayList();
+    		} else if (collectionClass == JSONArray.class) {
+    			newCollection = new JSONArray();
+       		} else if (collectionClass == LinkedList.class) {
+    			newCollection = new LinkedList();
+       		} else if (collectionClass == Vector.class) {
+    			newCollection = new Vector();
+       		} else if (collectionClass == HashSet.class) {
+    			newCollection = new HashSet();
+       		} else if (collectionClass == TreeSet.class) {
+    			newCollection = new TreeSet();
+      		} else if (collection == Collections.EMPTY_SET //
+      				|| collection == Collections.EMPTY_LIST) {
+    			newCollection = collection;
+    		} else {
+    			throw new UnsupportedOperationException("type not suppport : " + collectionClass);
+    		}
+    		
+    		for (Object item : collection) {
+    			newCollection.add(item);
+    		}
+    		
+    		return newCollection;
+    	}
+    	
+    	return o;
     }
 }

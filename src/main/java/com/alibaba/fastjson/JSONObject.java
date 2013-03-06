@@ -36,7 +36,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -319,9 +318,9 @@ public class JSONObject extends JSON implements Map<String, Object>, JSONAware, 
         return map.entrySet();
     }
 
-    @Override
-    public Object clone() {
-        return new JSONObject(new HashMap<String, Object>(map));
+	@Override
+    public JSONObject clone() {
+    	return (JSONObject) TypeUtils.clone(this);
     }
 
     public boolean equals(Object obj) {

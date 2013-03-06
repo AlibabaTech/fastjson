@@ -354,8 +354,8 @@ public class JSONArray extends JSON implements List<Object>, JSONAware, Cloneabl
     }
 
     @Override
-    public Object clone() {
-        return new JSONArray(new ArrayList<Object>(list));
+    public JSONArray clone() {
+    	return (JSONArray) TypeUtils.clone(this);
     }
 
     public boolean equals(Object obj) {
